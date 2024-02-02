@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head') %>
+    <title>Home Page</title>
+    <style>
+        /* Add your custom styles here */
+        .comment-container {
+            margin-top: 20px;
+        }
+
+        .comment {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .comment img {
+            width: 50px;
+            margin-right: 10px;
+        }
+
+        .comment pre {
+            white-space: pre-wrap; /* Handle line breaks in pre tag */
+        }
+    </style>
+</head>
+<body>
+    <%- include('./partials/navbar') %>
+
+    <div class="container mt-4">
+        <% if (!blog.isPrivate || (locals.user && blog.createdBy.equals(locals.user._id))) { %>
+            <h1><%= blog.title %></h1>
+            <img src="<%= blog.coverImageUrl %> " width="400px" height="400px"/>
+            <pre><%= blog.body %></pre>
+        <% } else { %>
+            <p>This is a private blog post and you do not have access to view it.</p>
+        <% } %>
+    </div>
+
+    
+    <div class="container mt-4">
+        <img src="<%= blog.createdBy.profileImageURL %> " width="50px"/>
+        <%= blog.createdBy.fullname %>
+    </div>
+
+    <div class="container mt-3">
+        <h1>Comment</h1>
+        <% if (locals.user) { %>
+            <form action="/comment/<%= blog._id %>" method="post">
+                <div class="mb-3">
+                    <input type="text" name="content" class="form-control" placeholder="Enter Your Comment">
+                    <button class="btn btn-sm btn-primary mt-3" type="submit">Add</button>
+                </div>
+            </form>
+        <% } %>
+    </div>
+    <div class="container mt-3">
+        <% if (comments.length > 0) { %>
+            <% comments.forEach(comment => { %>
+                <div class="comment">
+                    <img src="<%= comment.createdBy.profileImageURL %>" width="50px" />
+                    <div>
+                        <strong><%= comment.createdBy.fullname %></strong>
+                        <pre><%= comment.content %></pre>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p>No comments available.</p>
+        <% } %>
+    </div>
+    
+    
+    <%- include('./partials/script') %>
+</body>
+</html>
